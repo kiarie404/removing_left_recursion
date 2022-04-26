@@ -1,0 +1,46 @@
+{
+    "bnf": [
+        {
+            "token_value": "A",
+            "productions": [
+                [
+                    {
+                        "token_type": "terminal",
+                        "token_value": "a"
+                    },
+                    {
+                        "token_type": "non_terminal",
+                        "token_value": "C"
+                    }
+                ],
+                [
+                    {
+                        "token_type": "terminal",
+                        "token_value": "a"
+                    },
+                    {
+                        "token_type": "non_terminal",
+                        "token_value": "B"
+                    }
+                ],
+                [
+                    {
+                        "token_type": "terminal",
+                        "token_value": "a"
+                    }
+                ]
+            ]
+        },
+        {
+            "token_value": "B",
+            "productions": [
+                [
+                    {
+                        "token_type": "terminal",
+                        "token_value": "b"
+                    }
+                ]
+            ]
+        }
+    ]
+}
