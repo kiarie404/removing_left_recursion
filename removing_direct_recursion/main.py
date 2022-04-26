@@ -132,16 +132,6 @@ paragraph = {
                 ],
                 [
                     {
-                        "token_type": "non_terminal",
-                        "token_value": "B"
-                    },
-                    {
-                        "token_type": "terminal",
-                        "token_value": "b"
-                    }
-                ],
-                [
-                    {
                         "token_type": "terminal",
                         "token_value": "c"
                     }
@@ -150,17 +140,21 @@ paragraph = {
                     {
                         "token_type": "non_terminal",
                         "token_value": "S"
+                    },
+                    {
+                        "token_type": "terminal",
+                        "token_value": "a"
                     }
                 ],
                 [
                     {
                         "token_type": "terminal",
-                        "token_value": "LAMBDA"
+                        "token_value": "d"
                     }
                 ]
             ]
         }
-
 status = check_if_paragraph_has_direct_recursion(paragraph)
-generate_new_paragraphs_after_removing_direct_recursion(paragraph)
-print (status)
+arr = generate_new_paragraphs_after_removing_direct_recursion(paragraph)
+for element in arr:
+    display(element)
