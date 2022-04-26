@@ -40,14 +40,82 @@ def check_if_paragraph_has_direct_recursion(paragraph):
             # if it has a different name from the paragraph name... pass it
             if production[0]["token_value"] != paragraph_name:
                 pass
-                
+
             # else, indicate the direct left_recursion_status... and exit loop
             elif production[0]["token_value"] == paragraph_name:
                 left_recursion_status = True
                 break
     return left_recursion_status
 
+# this function takes in an DIRECt recursion infected paragraph
+# it returns clean paragraph(s) that dont have Recursion
+# those new paragraphs get returned in an array
+def generate_new_paragraphs_after_removing_direct_recursion(infected_paragraph):
 
+    infected_paragraph_name = get_paragraph_name(infected_paragraph)
+
+    # create two new empty paragrapghs
+    paragraph_root = {}
+    paragraph_child = {}
+
+    # let paragraph root have the same name as the infected_paragraph
+    paragraph_root["token_value"] = infected_paragraph_name
+    paragraph_root["productions"] = []
+
+    # let paragraph_child have a new unique name :
+    new_non_terminal_token = {"token_type" : "non_terminal", "token_value" : name_generator.generate_new_name() }
+    paragraph_child["token_value"] = new_non_terminal_token["token_value"]
+    paragraph_child["productions"] = []
+
+    # loop through the productions of the infected paragraph
+    for production in infected_paragraph["productions"]:
+        # if a production begins with a terminal and that terminal is not LAMBDA...
+        if (production[0]["token_type"] == "terminal") and (production[0]["token_value"] != "LAMBDA"):
+            new_production = [] # create a new empty priduction.
+            new_production = production # copy the contents of production into it
+            new_production.append(new_non_terminal_token) # append the new_non_terminal_token at the productions end
+            paragraph_root["productions"].append(new_production) # add the newly formed production to the new paragraph_root
+
+        # if a production has a LAMBDA only...
+        elif (production[0]["token_type"] == "terminal") and (production[0]["token_value"] == "LAMBDA") and (len(production) == 1):
+            new_production = [] # create a new empty priduction.
+            new_production.append(new_non_terminal_token) # append the new_non_terminal_token at the productions end
+            paragraph_root["productions"].append(new_production) # add the newly formed production to the new paragraph_root
+
+        # if production is an un-offensive non_terminal...
+        elif (production[0]["token_type"] == "non_terminal") and (production[0]["token_value"] != infected_paragraph_name):
+            new_production = [] # create a new empty priduction.
+            new_production = production # copy the contents of production into it
+            new_production.append(new_non_terminal_token) # append the new_non_terminal_token at the productions end
+            paragraph_root["productions"].append(new_production) # add the newly formed production to the new paragraph_root
+
+        # if production has offensive non_terminal
+        elif (production[0]["token_type"] == "non_terminal") and (production[0]["token_value"] == infected_paragraph_name):
+            production_with_backlog_tokens_only = production[1:] # slice off the first offensive token
+            new_production = production_with_backlog_tokens_only
+            new_production.append(new_non_terminal_token) # append the new_non_terminal_token at the productions end
+            paragraph_child["productions"].append(new_production) # add the newly formed production to the new paragraph_root
+
+
+    # after the loop, insert a lambda production to the paragraph_child
+    LAMBDA_token = {"token_type" : "terminal", "token_value" : "LAMBDA"}
+    new_production = [LAMBDA_token]
+    paragraph_child["productions"].append(new_production)
+
+    array_of_cleans = [] # create an array of clean paragraphs
+    # strore paragraphs that have at least one production
+    if ( len(paragraph_root["productions"]) >= 1):
+        array_of_cleans.append(paragraph_root)
+    if ( len(paragraph_child["productions"]) >= 1):
+        array_of_cleans.append(paragraph_child)
+
+    return array_of_cleans
+
+# this function displays a paragraph contents
+def display(paragraph):
+    print ("\n---- ", paragraph["token_value"], " -----")
+    for production in paragraph["productions"]:
+        print(production)
 
 paragraph = {
             "token_value": "S",
@@ -55,7 +123,7 @@ paragraph = {
                 [
                     {
                         "token_type": "non_terminal",
-                        "token_value": "A"
+                        "token_value": "S"
                     },
                     {
                         "token_type": "terminal",
@@ -81,11 +149,18 @@ paragraph = {
                 [
                     {
                         "token_type": "non_terminal",
-                        "token_value": "A"
+                        "token_value": "S"
+                    }
+                ],
+                [
+                    {
+                        "token_type": "terminal",
+                        "token_value": "LAMBDA"
                     }
                 ]
             ]
         }
 
 status = check_if_paragraph_has_direct_recursion(paragraph)
+generate_new_paragraphs_after_removing_direct_recursion(paragraph)
 print (status)
